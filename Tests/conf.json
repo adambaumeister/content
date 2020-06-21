@@ -1587,7 +1587,8 @@
         },
         {
             "integrations": "ThreatConnect v2",
-            "playbookID": "ThreatConnect v2 - Test"
+            "playbookID": "ThreatConnect v2 - Test",
+            "fromversion": "5.0.0"
         },
         {
             "integrations": "VxStream",
