@@ -74,9 +74,9 @@ def get_attachments_for_unit_test(build_url, is_sdk_build=False):
     unittests_fields = get_entities_fields(report_file_name="failed_lint_report", entity_title="Failed Unittests")
     color = 'good' if not unittests_fields else 'danger'
     if not unittests_fields:
-        title = 'Content Nightly Unit Tests - Success' if not is_sdk_build else 'Nightly SDK Unit Tests - Success'
+        title = 'Content Nightly Unit Tests - Success' if not is_sdk_build else 'SDK Nightly Unit Tests - Success'
     else:
-        title = 'Content Nightly Unit Tests - Failure' if not is_sdk_build else 'Nightly SDK Unit Tests - Failure'
+        title = 'Content Nightly Unit Tests - Failure' if not is_sdk_build else 'SDK Nightly Unit Tests - Failure'
     container_one_build_url = build_url + '#queue-placeholder/containers/1'
     content_team_attachment = [{
         'fallback': title,
