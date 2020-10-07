@@ -1,6 +1,7 @@
 import demistomock as demisto
 from CommonServerPython import *
 from CommonServerUserPython import *
+
 ''' IMPORTS '''
 
 import requests
@@ -16,6 +17,9 @@ DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 APP: Flask = Flask('talarix-receiver')
 
+ACKFIELD = demisto.params().get("smsackfield", "smsreceived")
+TEXTFIELD = demisto.params().get("smstextfield", "smstextfield")
+
 
 class Handler:
     @staticmethod
@@ -29,11 +33,26 @@ DEMISTO_LOGGER: Handler = Handler()
 @APP.route('/sms')
 def receivesms():
     txt = request.args.get('txt')
-    regex_result = re.search("(\d+)", txt)
+    regex_result = re.search(r"(\d+)", txt)
+
     if regex_result:
         incident_id = regex_result.group(1)
         demisto.info(f"Received message matching {incident_id}")
-        return "SMS Correctly Received."
+        try:
+            i = demisto.incidents({"id": incident_id})
+            demisto.info(i)
+
+            incident = {
+                "id": f"{incident_id}",
+                "version": -1,
+                "name": "created automatically from long running integration"
+            }
+            r = demisto.createIncidents([incident])
+            demisto.results("Done")
+            demisto.info(r)
+            return "SMS Correctly Received."
+        except Exception as e:
+            return f"Error processing SMS message:{e}"
     else:
         demisto.info(f"Received incoming message with no matching incident.")
         return "SMS Incorrectly received."
@@ -42,6 +61,7 @@ def receivesms():
 @APP.route('/')
 def ping():
     return "Working!"
+
 
 def run_long_running(params):
     port = params.get("longRunningPort", 8000)

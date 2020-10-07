@@ -13,6 +13,20 @@ configuration:
   name: longRunningPort
   required: false
   type: 0
+- additionalinfo: The name of an existing field that will be set to True when an SMS
+    is received matching the incident.
+  display: SMS Acknowledgement Field Name
+  hidden: false
+  name: smsackfield
+  required: false
+  type: 0
+- additionalinfo: The name of an existing field that will be set to the text of the
+    SMS rmessage when sent.
+  display: SMS Text Field Name
+  hidden: false
+  name: smstextfield
+  required: false
+  type: 0
 description: Talarix SMS Gateway appliance
 display: Talarix
 name: Talarix
