@@ -1,0 +1,28 @@
+category: Database
+commonfields:
+  id: Talarix
+  version: -1
+configuration:
+- defaultvalue: 'true'
+  display: Long Running Instance
+  hidden: true
+  name: longRunning
+  required: false
+  type: 8
+- hidden: false
+  name: longRunningPort
+  required: false
+  type: 0
+description: Talarix SMS Gateway appliance
+display: Talarix
+name: Talarix
+script:
+  dockerimage: demisto/teams:1.0.0.7832
+  feed: false
+  isfetch: false
+  longRunning: true
+  longRunningPort: true
+  runonce: false
+  script: '-'
+  subtype: python3
+  type: python
