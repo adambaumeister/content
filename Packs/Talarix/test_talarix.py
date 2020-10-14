@@ -1,17 +1,29 @@
 import demistomock as demisto
 import pytest
 from Talarix import main, APP
-
+import requests
+from unittest.mock import call
+TEST_PARAMS = {
+    "xsoar_apikey": "testkey",
+    "xsoar_server": "https://testserver"
+}
 
 def test_main(mocker):
     mocker.patch.object(demisto, 'args', return_value={})
     mocker.patch.object(demisto, 'command', return_value="test-module")
     main()
 
+class MockResponse():
+    def json(self):
+        return demisto.exampleIncidents[0]['Contents']
+
 
 def test_route_good_sms(mocker):
     # Path the various objects
+    mock_response = MockResponse()
     mocker.patch.object(demisto, 'info', return_value="None")
+    mocker.patch.object(demisto, 'params', return_value=TEST_PARAMS)
+    mocker.patch("requests.post", return_value=MockResponse())
 
     # Test the SMS receive
     test_client = APP.test_client()
@@ -20,8 +32,7 @@ def test_route_good_sms(mocker):
     rv = test_client.post("/", data={
         'txt': "Incident 1234"
     })
-
-    demisto.info.assert_called_once_with("Received message matching 1234")
+    demisto.info.assert_has_calls([call("Received message matching 1234"), call("Updated incident 1234") ] )
 
 
 def test_route_bad_sms(mocker):

@@ -44,6 +44,7 @@ def get_incident(incident_id):
     }
     r = requests.post(f"{SERVER}/incidents/search", json=data, headers=headers, verify=False)
     data = r.json()['data']
+
     if len(data) > 0:
         incident = data[0]
         incident_version = incident['version']
@@ -64,6 +65,7 @@ def receivesms():
         try:
             incident = get_incident(incident_id)
             if not incident:
+
                 demisto.info(f"Incident not found or closed:{incident_id}")
                 return f"Incident not found or closed:{incident_id}"
 
