@@ -17,7 +17,7 @@ def test_route_good_sms(mocker):
     test_client = APP.test_client()
     # First we test a valid incident message
 
-    rv = test_client.get("/sms", query_string={
+    rv = test_client.post("/", data={
         'txt': "Incident 1234"
     })
 
@@ -32,7 +32,7 @@ def test_route_bad_sms(mocker):
     test_client = APP.test_client()
     # First we test a valid incident message
 
-    rv = test_client.get("/sms", query_string={
+    rv = test_client.post("/", data={
         'txt': "Incident"
     })
 

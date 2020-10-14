@@ -9,7 +9,8 @@ configuration:
   name: longRunning
   required: false
   type: 8
-- hidden: false
+- additionalinfo: The port to listen on
+  hidden: false
   name: longRunningPort
   required: false
   type: 0
@@ -27,10 +28,30 @@ configuration:
   name: smstextfield
   required: false
   type: 0
+- additionalinfo: A valid XSOAR API Key (Settings->api keys)
+  hidden: false
+  name: xsoar_apikey
+  required: true
+  type: 0
+- additionalinfo: The url including schema (https://xsoar.corp) of the XSOAR instance
+  hidden: false
+  name: xsoar_server
+  required: true
+  type: 0
 description: Talarix SMS Gateway appliance
 display: Talarix
 name: Talarix
 script:
+  commands:
+  - arguments:
+    - default: false
+      isArray: false
+      name: incident_id
+      required: false
+      secret: false
+    deprecated: false
+    execution: false
+    name: get_incident
   dockerimage: demisto/teams:1.0.0.7832
   feed: false
   isfetch: false
