@@ -38,6 +38,12 @@ configuration:
   name: xsoar_server
   required: true
   type: 0
+- additionalinfo: The URL of the Talarix SMS Gateway
+  display: Talarix Server URL
+  hidden: false
+  name: url
+  required: false
+  type: 0
 description: Talarix SMS Gateway appliance
 display: Talarix
 name: Talarix
@@ -52,6 +58,29 @@ script:
     deprecated: false
     execution: false
     name: get_incident
+  - arguments:
+    - default: false
+      description: Text message to send
+      isArray: false
+      name: message
+      required: true
+      secret: false
+    - default: false
+      description: 'The number to send to '
+      isArray: false
+      name: number
+      required: true
+      secret: false
+    - default: false
+      description: Tar mode to use (defaults to text)
+      isArray: false
+      name: mode
+      required: false
+      secret: false
+    deprecated: false
+    description: Send an SMS message.
+    execution: false
+    name: send_sms
   dockerimage: demisto/teams:1.0.0.7832
   feed: false
   isfetch: false

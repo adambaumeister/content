@@ -5,7 +5,8 @@ import requests
 from unittest.mock import call
 TEST_PARAMS = {
     "xsoar_apikey": "testkey",
-    "xsoar_server": "https://testserver"
+    "xsoar_server": "https://testserver",
+    "url": "https://notreal.com"
 }
 
 def test_main(mocker):
@@ -20,7 +21,6 @@ class MockResponse():
 
 def test_route_good_sms(mocker):
     # Path the various objects
-    mock_response = MockResponse()
     mocker.patch.object(demisto, 'info', return_value="None")
     mocker.patch.object(demisto, 'params', return_value=TEST_PARAMS)
     mocker.patch("requests.post", return_value=MockResponse())
@@ -34,6 +34,11 @@ def test_route_good_sms(mocker):
     })
     demisto.info.assert_has_calls([call("Received message matching 1234"), call("Updated incident 1234") ] )
 
+
+def test_send_sms(mocker):
+    mocker.patch.object(demisto, 'info', return_value="None")
+    mocker.patch.object(demisto, 'params', return_value=TEST_PARAMS)
+    mocker.patch("requests.post", return_value=MockResponse())
 
 def test_route_bad_sms(mocker):
     # Path the various objects

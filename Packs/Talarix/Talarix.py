@@ -32,6 +32,52 @@ class Handler:
 
 DEMISTO_LOGGER: Handler = Handler()
 
+class Client(BaseClient):
+    """
+    Client will implement the service API, and should not contain any Demisto logic.
+    Should only do requests and return data.
+    """
+
+    def send_sms(self, number, message, mode):
+        """
+        initiates a http request to a test url
+        """
+        params = {
+            "tar_num": number,
+            "tar_msg": message,
+            "tar_mode": mode
+        }
+        data = self._http_request(
+            method='GET',
+            params=params,
+            url_suffix='/cmd/system/api/sendsms.cgi',
+            resp_type="text"
+        )
+
+
+        output = {
+        }
+
+        if "ERROR" in data:
+            e = data.split(";")
+            if len(e) > 0:
+                output["Error"] = e[1]
+        else:
+            m = data.split("Queued: ")
+            if len(m) > 0:
+                output["SentMessageID"] = m[1]
+
+        result = {
+            "Type": entryTypes["note"],
+            "ContentsFormat": formats["text"],
+            "Contents": data,
+            "EntryContext": {
+                "Talarix": output,
+            }
+        }
+        return result
+
+
 
 def get_incident(incident_id):
     data = {
@@ -44,7 +90,6 @@ def get_incident(incident_id):
     }
     r = requests.post(f"{SERVER}/incidents/search", json=data, headers=headers, verify=False)
     data = r.json()['data']
-
     if len(data) > 0:
         incident = data[0]
         incident_version = incident['version']
@@ -65,16 +110,18 @@ def receivesms():
         try:
             incident = get_incident(incident_id)
             if not incident:
-
                 demisto.info(f"Incident not found or closed:{incident_id}")
                 return f"Incident not found or closed:{incident_id}"
 
             incident['CustomFields'][ACKFIELD] = True
             if TEXTFIELD in incident['CustomFields']:
-                incident['CustomFields'][TEXTFIELD].append(request.form)
+                # If we've got an empty dictionary, replace it with the actual form to remove the dummy row
+                if not incident['CustomFields'][TEXTFIELD]:
+                    incident['CustomFields'][TEXTFIELD] = [request.form]
+                else:
+                    incident['CustomFields'][TEXTFIELD].append(request.form)
             else:
-                incident['CustomFields'][TEXTFIELD] = [ request.form ]
-
+                incident['CustomFields'][TEXTFIELD] = [request.form]
 
             demisto.createIncidents([incident])
             demisto.results(f"Updated incident {incident_id}")
@@ -111,12 +158,25 @@ def main():
     commands = {
         'test-module': test_module,
     }
+    url = params.get("url")
+    client = Client(
+        base_url=url,
+        verify=False
+    )
 
     try:
         if command == 'long-running-execution':
             run_long_running(params)
         elif command == 'get_incident':
             get_incident(demisto.args().get("incident_id"))
+        elif command == 'send_sms':
+            message = demisto.args().get("message")
+            number = demisto.args().get("number")
+            mode = demisto.args().get("mode", "text")
+            result = client.send_sms(number, message, mode)
+
+            demisto.results(result)
+
         else:
             readable_output, outputs, raw_response = commands[command](demisto.args(), params)
             return_outputs(readable_output, outputs, raw_response)
