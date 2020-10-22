@@ -1,0 +1,327 @@
+{
+    "CustomFields": {
+        "analysttier": "Tier2",
+        "detectionsla": {
+            "accumulatedPause": 0,
+            "breachTriggered": false,
+            "dueDate": "0001-01-01T00:00:00Z",
+            "endDate": "0001-01-01T00:00:00Z",
+            "lastPauseDate": "0001-01-01T00:00:00Z",
+            "runStatus": "idle",
+            "sla": 20,
+            "slaStatus": -1,
+            "startDate": "0001-01-01T00:00:00Z",
+            "totalDuration": 0
+        },
+        "domainname": "CFP",
+        "escalated": true,
+        "offenseidcategories": "Misc Login Succeeded, Suspicious Pattern Detected, Misc Login Failed, Remote Access Login Failed, User Login Failure",
+        "offenseiddescription": "Login Failures Followed By Success to the same Destination IP\n preceded by Multiple Login Failures for the Same User\n preceded by Multiple Login Failures to the Same Destination\n preceded by Multiple Login Failures from the Same Source\n containing login on-failure\n",
+        "remediationsla": {
+            "accumulatedPause": 0,
+            "breachTriggered": false,
+            "dueDate": "2020-10-26T05:01:37.229373035Z",
+            "endDate": "0001-01-01T00:00:00Z",
+            "lastPauseDate": "0001-01-01T00:00:00Z",
+            "runStatus": "running",
+            "sla": 7200,
+            "slaStatus": -1,
+            "startDate": "2020-10-21T05:01:37.229373035Z",
+            "totalDuration": 0
+        },
+        "ruleidseverity": [
+            {
+                "ruleid": "100053",
+                "severity": "5",
+                "severitylevel": "Medium"
+            },
+            {
+                "ruleid": "100054",
+                "severity": "5",
+                "severitylevel": "Medium"
+            }
+        ],
+        "smsmessagetable": [
+            {
+                "message": "2020-9-21 INC32, Test yayy!, Medium ,  CFP",
+                "time": "2020-10-21T05:00:53.042435591Z"
+            }
+        ],
+        "smstxt": [
+            {},
+            {
+                "dtm": "21/10/2020 05:01:56",
+                "mno": "manual",
+                "txt": "Manually Acknowledged."
+            },
+            {
+                "dtm": "21/10/2020 05:05:22",
+                "mno": "manual",
+                "txt": "Manually Acknowledged."
+            }
+        ],
+        "tier1timer": {
+            "accumulatedPause": 0,
+            "breachTriggered": false,
+            "dueDate": "0001-01-01T00:00:00Z",
+            "endDate": "0001-01-01T00:00:00Z",
+            "lastPauseDate": "2020-10-21T05:01:58.352384565Z",
+            "runStatus": "paused",
+            "sla": 0,
+            "slaStatus": -1,
+            "startDate": "2020-10-21T05:01:37.244592398Z",
+            "totalDuration": 0
+        },
+        "tier2timer": {
+            "accumulatedPause": 0,
+            "breachTriggered": false,
+            "dueDate": "0001-01-01T00:00:00Z",
+            "endDate": "0001-01-01T00:00:00Z",
+            "lastPauseDate": "0001-01-01T00:00:00Z",
+            "runStatus": "running",
+            "sla": 0,
+            "slaStatus": -1,
+            "startDate": "2020-10-21T05:01:58.395131691Z",
+            "totalDuration": 0
+        },
+        "tier3timer": {
+            "accumulatedPause": 0,
+            "breachTriggered": false,
+            "dueDate": "0001-01-01T00:00:00Z",
+            "endDate": "0001-01-01T00:00:00Z",
+            "lastPauseDate": "0001-01-01T00:00:00Z",
+            "runStatus": "idle",
+            "sla": 0,
+            "slaStatus": -1,
+            "startDate": "0001-01-01T00:00:00Z",
+            "totalDuration": 0
+        },
+        "timetoassignment": {
+            "accumulatedPause": 0,
+            "breachTriggered": false,
+            "dueDate": "0001-01-01T00:00:00Z",
+            "endDate": "2020-10-21T05:01:37.214204674Z",
+            "lastPauseDate": "0001-01-01T00:00:00Z",
+            "runStatus": "ended",
+            "sla": 0,
+            "slaStatus": -1,
+            "startDate": "2020-10-21T05:01:16.62758908Z",
+            "totalDuration": 20
+        },
+        "urlsslverification": []
+    },
+    "ShardID": 0,
+    "account": "",
+    "activated": "0001-01-01T00:00:00Z",
+    "attachment": null,
+    "autime": 1603256453042436000,
+    "canvases": null,
+    "category": "",
+    "closeNotes": "",
+    "closeReason": "",
+    "closed": "0001-01-01T00:00:00Z",
+    "closingUserId": "",
+    "created": "2020-10-21T05:00:53.042436091Z",
+    "dbotCreatedBy": "admin",
+    "dbotCurrentDirtyFields": null,
+    "dbotDirtyFields": null,
+    "dbotMirrorDirection": "",
+    "dbotMirrorId": "",
+    "dbotMirrorInstance": "",
+    "dbotMirrorLastSync": "0001-01-01T00:00:00Z",
+    "dbotMirrorTags": null,
+    "details": "",
+    "droppedCount": 0,
+    "dueDate": "0001-01-01T00:00:00Z",
+    "feedBased": false,
+    "hasRole": false,
+    "id": "32",
+    "investigationId": "32",
+    "isPlayground": false,
+    "labels": [
+        {
+            "type": "last_persisted_time",
+            "value": "1599770419000"
+        },
+        {
+            "type": "username_count",
+            "value": "52"
+        },
+        {
+            "type": "description",
+            "value": "Login Failures Followed By Success to the same Destination IP\n preceded by Multiple Login Failures for the Same User\n preceded by Multiple Login Failures to the Same Destination\n preceded by Multiple Login Failures from the Same Source\n containing login on-failure\n"
+        },
+        {
+            "type": "rules",
+            "value": "[{'id': 100053, 'type': 'CRE_RULE'}, {'id': 100054, 'type': 'CRE_RULE'}]"
+        },
+        {
+            "type": "event_count",
+            "value": "1190"
+        },
+        {
+            "type": "flow_count",
+            "value": "0"
+        },
+        {
+            "type": "assigned_to",
+            "value": "None"
+        },
+        {
+            "type": "security_category_count",
+            "value": "5"
+        },
+        {
+            "type": "follow_up",
+            "value": "False"
+        },
+        {
+            "type": "source_address_ids",
+            "value": "[5605, 5712, 3845, 5652, 5607, 5648, 5694, 5715, 5606, 5609, 5697, 5604, 5665, 5686, 5671, 5699, 5619, 5711, 5695, 5616, 5654, 5661, 5611, 5582, 5628, 5669, 5583, 5701, 5612, 5633, 5580, 5636, 5646, 5627, 2922, 5622, 5592, 5581, 5642, 5660, 5579, 5591, 5590, 5663, 5710, 5713, 5688, 5698, 5689, 5714, 5655, 5643]"
+        },
+        {
+            "type": "source_count",
+            "value": "52"
+        },
+        {
+            "type": "inactive",
+            "value": "True"
+        },
+        {
+            "type": "protected",
+            "value": "False"
+        },
+        {
+            "type": "closing_user",
+            "value": "None"
+        },
+        {
+            "type": "destination_networks",
+            "value": "['XYZ_PRO.WAN_MGMT']"
+        },
+        {
+            "type": "source_network",
+            "value": "other"
+        },
+        {
+            "type": "category_count",
+            "value": "5"
+        },
+        {
+            "type": "close_time",
+            "value": "None"
+        },
+        {
+            "type": "remote_destination_count",
+            "value": "0"
+        },
+        {
+            "type": "start_time",
+            "value": "1599751257188"
+        },
+        {
+            "type": "magnitude",
+            "value": "4"
+        },
+        {
+            "type": "last_updated_time",
+            "value": "1599768197463"
+        },
+        {
+            "type": "credibility",
+            "value": "3"
+        },
+        {
+            "type": "id",
+            "value": "3000"
+        },
+        {
+            "type": "categories",
+            "value": "['Misc Login Succeeded', 'Suspicious Pattern Detected', 'Misc Login Failed', 'Remote Access Login Failed', 'User Login Failure']"
+        },
+        {
+            "type": "severity",
+            "value": "5"
+        },
+        {
+            "type": "policy_category_count",
+            "value": "0"
+        },
+        {
+            "type": "log_sources",
+            "value": "[{'type_name': 'EventCRE', 'type_id': 18, 'name': 'Custom Rule Engine-105 :: ABC-PROJA-QRP01', 'id': 113}, {'type_name': 'IOS', 'type_id': 20, 'name': 'IOS @ 2.3.21.10', 'id': 444}]"
+        },
+        {
+            "type": "closing_reason_id",
+            "value": "None"
+        },
+        {
+            "type": "device_count",
+            "value": "2"
+        },
+        {
+            "type": "first_persisted_time",
+            "value": "1599751409000"
+        },
+        {
+            "type": "offense_type",
+            "value": "1"
+        },
+        {
+            "type": "relevance",
+            "value": "5"
+        },
+        {
+            "type": "domain_id",
+            "value": "5"
+        },
+        {
+            "type": "offense_source",
+            "value": "2.3.21.10"
+        },
+        {
+            "type": "local_destination_address_ids",
+            "value": "[83]"
+        },
+        {
+            "type": "local_destination_count",
+            "value": "1"
+        },
+        {
+            "type": "status",
+            "value": "OPEN"
+        }
+    ],
+    "lastJobRunTime": "0001-01-01T00:00:00Z",
+    "lastOpen": "0001-01-01T00:00:00Z",
+    "linkedCount": 0,
+    "linkedIncidents": null,
+    "modified": "2020-10-21T05:05:23.535440779Z",
+    "name": "Test yayy!",
+    "notifyTime": "2020-10-21T05:05:23.524044433Z",
+    "occurred": "2020-10-21T05:00:53.042435591Z",
+    "openDuration": 0,
+    "owner": "Tier2",
+    "parent": "",
+    "phase": "",
+    "playbookId": "60b59bd1-fb66-451d-89fc-8918dab08883",
+    "previousRoles": null,
+    "rawCategory": "",
+    "rawCloseReason": "",
+    "rawJSON": "",
+    "rawName": "Test yayy!",
+    "rawPhase": "",
+    "rawType": "Case",
+    "reason": "",
+    "reminder": "2020-10-25T05:00:53.042436091Z",
+    "roles": null,
+    "runStatus": "waiting",
+    "severity": 2,
+    "sla": 0,
+    "sortValues": null,
+    "sourceBrand": "Manual",
+    "sourceInstance": "admin",
+    "status": 1,
+    "type": "Case",
+    "version": 27
+}

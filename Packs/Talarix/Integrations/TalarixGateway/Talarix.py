@@ -9,6 +9,7 @@ from gevent.pywsgi import WSGIServer
 from flask import Flask, Response, request
 import re
 import requests
+from datetime import datetime, date, time, timezone
 
 # Disable insecure warnings
 requests.packages.urllib3.disable_warnings()
@@ -32,6 +33,7 @@ class Handler:
 
 DEMISTO_LOGGER: Handler = Handler()
 
+
 class Client(BaseClient):
     """
     Client will implement the service API, and should not contain any Demisto logic.
@@ -54,9 +56,7 @@ class Client(BaseClient):
             resp_type="text"
         )
 
-
-        output = {
-        }
+        output = {}
 
         if "ERROR" in data:
             e = data.split(";")
@@ -66,6 +66,7 @@ class Client(BaseClient):
             m = data.split("Queued: ")
             if len(m) > 0:
                 output["SentMessageID"] = m[1]
+            update_sms_table(TEXTFIELD, message)
 
         result = {
             "Type": entryTypes["note"],
@@ -76,7 +77,6 @@ class Client(BaseClient):
             }
         }
         return result
-
 
 
 def get_incident(incident_id):
@@ -134,7 +134,6 @@ def receivesms():
         return "SMS Incorrectly received."
 
 
-
 def run_long_running(params):
     port = params.get("longRunningPort", 8000)
     port = int(port)
@@ -145,6 +144,40 @@ def run_long_running(params):
 
 def test_module(dargs, params):
     return "ok", {}, ""
+
+
+def update_sms_table(field, value):
+    """
+    Add a row to the SMS Text table, usually used by send_sms.
+    """
+    inc = demisto.incidents()[0]
+    if "CustomFields" not in inc:
+        return
+
+    if inc['CustomFields'] is None:
+        return
+
+    if field not in inc['CustomFields']:
+        return
+
+    d = datetime.now(timezone.utc)
+    sent_time = d.strftime("%d/%m/%y %H:%M:%S")
+
+    row = {
+        "dtm": sent_time,
+        "mno": "sent_from_xsoar",
+        "txt": value
+    }
+    table = inc['CustomFields'][field]
+    if not table:
+        table = [row]
+    else:
+        table.append(row)
+    set_args = {
+        field: table
+    }
+    demisto.executeCommand("setIncident", set_args)
+    return table
 
 
 def main():
