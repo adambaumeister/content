@@ -1,0 +1,24 @@
+args:
+- default: false
+  isArray: false
+  name: from
+  required: false
+  secret: false
+- default: false
+  isArray: false
+  name: to
+  required: false
+  secret: false
+comment: Graph the active incidents by Incident Name,
+commonfields:
+  id: a7ee6b8b-d1d7-4c00-b456-1f27dd305ae3
+  version: -1
+enabled: false
+name: GraphIncidentsByName
+script: '-'
+subtype: python3
+system: false
+tags:
+- widget
+timeout: '0'
+type: python
