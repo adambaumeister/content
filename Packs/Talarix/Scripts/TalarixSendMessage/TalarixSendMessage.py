@@ -24,7 +24,7 @@ def update_sms_table(field, value, utc_offset=0):
 
 
 
-    d = datetime.now() - timedelta(hours=utc_offset)
+    d = datetime.now() - timedelta(hours=int(utc_offset))
     sent_time = d.strftime("%d/%m/%y %H:%M:%S")
 
     row = {
