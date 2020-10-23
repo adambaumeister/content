@@ -3,8 +3,9 @@ from CommonServerPython import *
 from CommonServerUserPython import *
 
 ''' IMPORTS '''
+from datetime import datetime, time, date, timezone, timedelta
 
-def update_sms_table(field, value):
+def update_sms_table(field, value, utc_offset=0):
     """
     Add a row to the SMS Text table, usually used by send_sms.
     """
@@ -23,7 +24,7 @@ def update_sms_table(field, value):
 
 
 
-    d = datetime.now()
+    d = datetime.now() - timedelta(hours=utc_offset)
     sent_time = d.strftime("%d/%m/%y %H:%M:%S")
 
     row = {
@@ -47,8 +48,9 @@ def update_sms_table(field, value):
 
 def send_sms():
     message = demisto.args().get("message")
+    utc_offset = demisto.args().get("utc_offset", None)
     table = demisto.args().get("sms_table_field", "smstxt")
     #demisto.results(demisto.executeCommand("send_sms", demisto.args()))
-    update_sms_table(table, message)
+    update_sms_table(table, message, utc_offset)
 
 send_sms()
