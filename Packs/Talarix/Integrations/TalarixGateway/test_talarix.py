@@ -1,6 +1,6 @@
 import demistomock as demisto
 import pytest
-from Talarix import main, APP, update_sms_table
+from Talarix import main, APP
 import requests
 from unittest.mock import call
 import json
@@ -40,7 +40,7 @@ def test_route_good_sms(mocker):
     demisto.info.assert_has_calls([call("Received message matching 1234"), call("Updated incident 1234")])
 
 
-def test_upate_table(mocker):
+def dtest_upate_table(mocker):
     mocker.patch.object(demisto, 'info', return_value=None)
     mocker.patch.object(demisto, 'params', return_value=TEST_PARAMS)
     mocker.patch.object(demisto, 'incidents', return_value=TEST_INCIDENT)
