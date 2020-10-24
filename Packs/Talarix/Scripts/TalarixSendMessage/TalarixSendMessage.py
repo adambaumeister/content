@@ -5,7 +5,7 @@ from CommonServerUserPython import *
 ''' IMPORTS '''
 from datetime import datetime, time, date, timezone, timedelta
 
-def update_sms_table(field, value, utc_offset=0):
+def update_sms_table(field, value):
     """
     Add a row to the SMS Text table, usually used by send_sms.
     """
@@ -22,9 +22,7 @@ def update_sms_table(field, value, utc_offset=0):
         demisto.results("Custom field {} not in incident.".format(field))
         return
 
-
-
-    d = datetime.now() - timedelta(hours=int(utc_offset))
+    d = datetime.now()
     sent_time = d.strftime("%d/%m/%y %H:%M:%S")
 
     row = {
@@ -48,9 +46,8 @@ def update_sms_table(field, value, utc_offset=0):
 
 def send_sms():
     message = demisto.args().get("message")
-    utc_offset = demisto.args().get("utc_offset", None)
     table = demisto.args().get("sms_table_field", "smstxt")
-    #demisto.results(demisto.executeCommand("send_sms", demisto.args()))
-    update_sms_table(table, message, utc_offset)
+    demisto.results(demisto.executeCommand("send_sms", demisto.args()))
+    update_sms_table(table, message)
 
 send_sms()

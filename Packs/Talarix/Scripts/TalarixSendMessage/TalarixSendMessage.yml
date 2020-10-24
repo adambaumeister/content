@@ -17,12 +17,6 @@ args:
   name: sms_table_field
   required: false
   secret: false
-- default: false
-  description: Changes the timezone in the sent messages
-  isArray: false
-  name: utc_offset
-  required: false
-  secret: false
 comment: Send an SMS via Talarix SMS gateway
 commonfields:
   id: 25763615-08d3-45a4-b95b-ccd7e166d0b6
@@ -35,4 +29,3 @@ system: false
 timeout: '0'
 type: python
 dockerimage: demisto/python3:3.8.6.12176
-

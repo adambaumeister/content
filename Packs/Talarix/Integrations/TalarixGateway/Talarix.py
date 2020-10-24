@@ -112,14 +112,19 @@ def receivesms():
                 return f"Incident not found or closed:{incident_id}"
 
             incident['CustomFields'][ACKFIELD] = True
+            data = {
+                "dtm": datetime.now().strftime("%d/%m/%y %H:%M:%S"),
+                "mno": request.form.get("mno"),
+                "txt": request.form.get("txt")
+            }
             if TEXTFIELD in incident['CustomFields']:
                 # If we've got an empty dictionary, replace it with the actual form to remove the dummy row
                 if not incident['CustomFields'][TEXTFIELD]:
-                    incident['CustomFields'][TEXTFIELD] = [request.form]
+                    incident['CustomFields'][TEXTFIELD] = [data]
                 else:
-                    incident['CustomFields'][TEXTFIELD].append(request.form)
+                    incident['CustomFields'][TEXTFIELD].append(data)
             else:
-                incident['CustomFields'][TEXTFIELD] = [request.form]
+                incident['CustomFields'][TEXTFIELD] = [data]
 
             demisto.createIncidents([incident])
             demisto.results(f"Updated incident {incident_id}")
