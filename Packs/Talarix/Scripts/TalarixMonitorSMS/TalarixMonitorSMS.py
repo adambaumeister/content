@@ -11,7 +11,7 @@ def monitor_table(task_id, field_id, index):
         rcv_sms = []
         for row in table:
             if 'mno' in row:
-                if row['mno'] != "sent_from_xsoar":
+                if "sent" not in row['mno']:
                     rcv_sms.append(row)
 
         current_length = len(rcv_sms)

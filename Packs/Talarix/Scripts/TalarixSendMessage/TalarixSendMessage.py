@@ -25,9 +25,10 @@ def update_sms_table(field, value):
     d = datetime.now()
     sent_time = d.strftime("%d/%m/%y %H:%M:%S")
 
+    number = demisto.args().get("number")
     row = {
         "dtm": sent_time,
-        "mno": "sent_from_xsoar",
+        "mno": f"sent_{number}",
         "txt": value
     }
     table = inc['CustomFields'][field]

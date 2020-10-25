@@ -12,6 +12,9 @@ TEST_INCIDENT = [json.load(open("DATA_TESTINCIDENT.json"))]
 
 
 def test_monitor(mocker):
+    """
+    Test the case that we've gotten a new message
+    """
     mocker.patch.object(demisto, 'args', return_value=TEST_ARGS)
     mocker.patch.object(demisto, 'results', return_value=TEST_ARGS)
     mocker.patch.object(demisto, 'incidents', return_value=TEST_INCIDENT)
@@ -23,6 +26,9 @@ def test_monitor(mocker):
 
 
 def test_monitor_no_msg(mocker):
+    """
+    Test the case that where there are no messages at all
+    """
     mocker.patch.object(demisto, 'args', return_value=TEST_ARGS)
     mocker.patch.object(demisto, 'results', return_value=TEST_ARGS)
     mocker.patch.object(demisto, 'executeCommand', return_value=TEST_ARGS)
@@ -35,12 +41,15 @@ def test_monitor_no_msg(mocker):
 
 
 def test_monitor_sent_message_only(mocker):
+    """
+    Test the case where there is a message, but outgoing only
+    """
     mocker.patch.object(demisto, 'args', return_value=TEST_ARGS)
     mocker.patch.object(demisto, 'results', return_value=TEST_ARGS)
     mocker.patch.object(demisto, 'executeCommand', return_value=TEST_ARGS)
 
     TEST_INCIDENT[0]['CustomFields'][TEST_ARGS['field_id']] = [
-        {'dtm': '21/10/2020 05:05:22', 'mno': 'sent_from_xsoar', 'txt': 'Blah blah'}]
+        {'dtm': '21/10/2020 05:05:22', 'mno': 'sent_+61123456789', 'txt': 'Blah blah'}]
     mocker.patch.object(demisto, 'incidents', return_value=TEST_INCIDENT)
     main()
     demisto.executeCommand.assert_not_called()
