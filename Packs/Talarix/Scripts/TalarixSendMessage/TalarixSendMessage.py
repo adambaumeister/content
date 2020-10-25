@@ -23,7 +23,7 @@ def update_sms_table(field, value):
         return
 
     d = datetime.now()
-    sent_time = d.strftime("%d/%m/%y %H:%M:%S")
+    sent_time = d.strftime(("%a, %d %b %Y %H:%M:%S %Z"))
 
     number = demisto.args().get("number")
     row = {

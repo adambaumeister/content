@@ -113,7 +113,7 @@ def receivesms():
 
             incident['CustomFields'][ACKFIELD] = True
             data = {
-                "dtm": datetime.now().strftime("%d/%m/%y %H:%M:%S"),
+                "dtm": datetime.now().strftime(("%a, %d %b %Y %H:%M:%S %Z")),
                 "mno": request.form.get("mno"),
                 "txt": request.form.get("txt")
             }
