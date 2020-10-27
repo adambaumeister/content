@@ -29,7 +29,8 @@ def update_sms_table(field, value):
     row = {
         "dtm": sent_time,
         "mno": f"sent_{number}",
-        "txt": value
+        "txt": value,
+        "direction": f"Sent to {number}"
     }
     table = inc['CustomFields'][field]
       

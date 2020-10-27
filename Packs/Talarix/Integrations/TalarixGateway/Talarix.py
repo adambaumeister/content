@@ -115,7 +115,8 @@ def receivesms():
             data = {
                 "dtm": datetime.now().strftime(("%a, %d %b %Y %H:%M:%S %Z")),
                 "mno": request.form.get("mno"),
-                "txt": request.form.get("txt")
+                "txt": request.form.get("txt"),
+                "direction": f"Received from {request.form.get('mno')}"
             }
             if TEXTFIELD in incident['CustomFields']:
                 # If we've got an empty dictionary, replace it with the actual form to remove the dummy row

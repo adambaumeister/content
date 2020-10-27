@@ -1,0 +1,32 @@
+args:
+- default: false
+  isArray: false
+  name: task_tag
+  required: true
+  secret: false
+- default: false
+  isArray: false
+  name: ack_SMS_message
+  required: false
+  secret: false
+- default: false
+  isArray: false
+  name: ack_mobileNo
+  required: false
+  secret: false
+comment: Complete tasks tagged with the passed value.
+commonfields:
+  id: c4b71015-5ad8-4949-8a13-0677f2fc91d8
+  version: -1
+enabled: true
+name: AckTask
+script: '-'
+subtype: python3
+system: false
+timeout: '0'
+type: python
+dockerimage: demisto/python3:3.8.6.12176
+runas: DBotWeakRole
+runonce: false
+pswd: ''
+vcShouldKeepItemLegacyProdMachine: false
