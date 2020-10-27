@@ -1,0 +1,23 @@
+args:
+- default: false
+  description: Reminder Message to send. Supports python "format" style variable interpolation.
+  isArray: false
+  name: message
+  required: true
+  secret: false
+- default: false
+  description: Number to send reminder message to
+  isArray: false
+  name: number
+  required: true
+  secret: false
+commonfields:
+  id: 8970dbcc-1b91-4152-8ff6-0d2b2ce62dbd
+  version: -1
+enabled: false
+name: SendReminderSMS
+script: '-'
+subtype: python3
+system: false
+timeout: '0'
+type: python
