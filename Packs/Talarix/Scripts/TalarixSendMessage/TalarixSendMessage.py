@@ -25,12 +25,13 @@ def update_sms_table(field, value):
     d = datetime.now()
     sent_time = d.strftime(("%a, %d %b %Y %H:%M:%S %Z"))
 
-    number = demisto.args().get("number")
+    numbers = argToList(demisto.args().get("number"))
+    numbers_str = ",".join(numbers)
     row = {
         "dtm": sent_time,
-        "mno": f"sent_{number}",
+        "mno": f"sent_{numbers_str}",
         "txt": value,
-        "direction": f"Sent to {number}"
+        "direction": f"Sent to {numbers_str}"
     }
     table = inc['CustomFields'][field]
       
@@ -49,7 +50,13 @@ def update_sms_table(field, value):
 def send_sms():
     message = demisto.args().get("message")
     table = demisto.args().get("sms_table_field", "smstxt")
-    demisto.results(demisto.executeCommand("send_sms", demisto.args()))
+    numbers = argToList(demisto.args().get("number"))
+    for number in numbers:
+        a = {
+            "message": message,
+            "number": number
+        }
+        demisto.results(demisto.executeCommand("send_sms", a))
     update_sms_table(table, message)
 
 send_sms()

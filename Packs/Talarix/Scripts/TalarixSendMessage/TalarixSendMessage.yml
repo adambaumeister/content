@@ -7,7 +7,7 @@ args:
   secret: false
 - default: false
   description: The Number (ex. +61123456789)
-  isArray: false
+  isArray: true
   name: number
   required: true
   secret: false

@@ -34,5 +34,10 @@ def send_and_update(context):
     return res
 
 
-context = get_context()
-demisto.results(send_and_update(context))
+def main():
+    context = get_context()
+    demisto.results(send_and_update(context))
+
+
+if __name__ in ('__builtin__', 'builtins'):
+    main()
