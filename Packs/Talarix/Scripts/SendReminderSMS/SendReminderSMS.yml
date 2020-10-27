@@ -9,7 +9,13 @@ args:
   description: Number to send reminder message to
   isArray: false
   name: number
-  required: true
+  required: false
+  secret: false
+- default: false
+  description: An object containing primary, secondary, and mangement contacts.
+  isArray: true
+  name: contacts
+  required: false
   secret: false
 commonfields:
   id: 8970dbcc-1b91-4152-8ff6-0d2b2ce62dbd

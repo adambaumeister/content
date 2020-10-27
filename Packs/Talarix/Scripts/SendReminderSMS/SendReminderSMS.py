@@ -17,17 +17,26 @@ def get_context():
 
 def send_and_update(context):
     message = demisto.args().get("message")
+    number = demisto.args().get("number")
+    contacts = argToList(demisto.args().get("contacts"))
 
     c = 0
     if CONTEXT_KEY in context:
         c = context[CONTEXT_KEY]
+
+    if contacts:
+        contacts = contacts[0]
+        if c == 0:
+            number = contacts["primarymobile"]
+        elif c >= 1:
+            number = "{},{}".format(contacts['primarymobile'],contacts['secondarymobile'])
 
     c = c + 1
     message = message.format(c)
 
     res = demisto.executeCommand("TalarixSendMessage", {
         "message": message,
-        "number": demisto.args().get("number")
+        "number": number
     })
 
     demisto.executeCommand("Set", {"key": CONTEXT_KEY, "value": c})
