@@ -20,6 +20,18 @@ configuration:
   name: proxy
   required: false
   type: 8
+- additionalinfo: This is the query we use when fetching incidents - ex "+basetypes:(credential-sighting)"
+  display: Fetch Incidents Query
+  hidden: false
+  name: query
+  required: false
+  type: 0
+- additionalinfo: Maximum number of incidents to fetch at once
+  display: Fetch Limit
+  hidden: false
+  name: limit
+  required: false
+  type: 0
 description: Use the Flashpoint integration to reduce business risk.
 display: Flashpoint_dev
 name: Flashpoint_dev
@@ -765,7 +777,7 @@ script:
     name: flashpoint-search-all
   dockerimage: demisto/python3:3.8.2.6981
   feed: false
-  isfetch: false
+  isfetch: true
   longRunning: false
   longRunningPort: false
   runonce: false

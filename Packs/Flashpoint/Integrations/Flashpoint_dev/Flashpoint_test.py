@@ -59,9 +59,29 @@ class MyTestCase(unittest.TestCase):
         mocker.return_value = expected
         result = search_generic(self.client, query="+basetypes:(credential-sighting)",
                                 start_date="2020-11-10T00:00:00Z",
-                                limit=5 )
+                                limit=5)
 
         assert len(result) == 1
+
+    @patch("Flashpoint.demisto.getLastRun")
+    @patch("Flashpoint.Client.http_request")
+    def test_fetch_incidents(self, mocker, demistomocker):
+        """
+        Test fetching the incidents
+        """
+        from Flashpoint import fetch_incidents
+
+        with open("./TestData/events_search_breach.json", encoding='utf-8') as f:
+            expected = json.load(f)
+
+        demistomocker.return_value = {
+            'last_fetch': "2020-11-16T14:59:19.247208"
+        }
+
+        mocker.return_value = expected
+        result = fetch_incidents(self.client)
+        assert len(result) == 1
+        assert result[0].get("name") == "Flashpoint Credential Breach - fake@fakecustomerdomain.com"
 
     @patch("Flashpoint.Client.http_request")
     def test_ip(self, mocker):

@@ -1427,7 +1427,10 @@ def get_forum_posts_command(client, post_search):
 
 
 def search_generic(client, query, start_date, limit=10):
-    # Search for IP in torrents
+    """
+    Query the Flashpoint database for all events matching the given query
+    """
+    limit = int(limit)
     suffix = f'/all/search?query={query}+last_observed_at.date-time:' \
              f'[{start_date} TO *]&limit={limit}'
     resp = client.http_request("GET", url_suffix=suffix)
@@ -1436,6 +1439,9 @@ def search_generic(client, query, start_date, limit=10):
 
 
 def search_generic_command(client, query, start_date, limit=10):
+    """
+    Query the Flashpoint database for all events matching the given query
+    """
     result = search_generic(client, query, start_date, limit)
     t = []
     for hit in result:
@@ -1452,6 +1458,49 @@ def search_generic_command(client, query, start_date, limit=10):
         outputs=result,
         readable_output=md_table
     ))
+
+
+def fetch_incidents(client):
+    last_run = demisto.getLastRun()
+    if not last_run:
+        start_date = datetime.now() - timedelta(days=1)
+        start_date = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+    else:
+        last_fetch = last_run.get('last_fetch')
+        time = datetime.fromisoformat(str(last_fetch))
+        start_date = time.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # Grab the integration params
+    query = demisto.params().get("query", "+basetypes:(credential-sighting)")
+    limit = demisto.params().get("limit", "10")
+
+    results = search_generic(client, query, start_date, limit)
+    incidents = []
+    for hit in results:
+        # Compute the incident name..
+        # Credential-sighting
+        if hit.get("_source").get("email"):
+            email = hit.get("_source").get("email")
+            name = f"Flashpoint Credential Breach - {email}"
+        else:
+            fpid = hit.get("_source").get("fpid")
+            name = f"Flashpoint Event {fpid}"
+
+        occured = hit.get("_source").get("last_observed_at").get("date-time")
+        incident = {
+            'name': name,
+            'occured': occured,
+            'rawJSON': json.dumps(hit)
+        }
+
+        incidents.append(incident)
+    endTime = datetime.now()
+
+    lastRun = {'last_fetch': endTime.isoformat()}
+    demisto.setLastRun(lastRun)
+    demisto.incidents(incidents)
+
+    return incidents
 
 def main():
     """
@@ -1548,9 +1597,14 @@ def main():
 
         elif demisto.command() == 'flashpoint-search-all':
             query = demisto.args().get('query')
-            start_time = demisto.args().get('start_time', datetime.now() - timedelta(days=1))
+            default_start_time = datetime.now() - timedelta(days=1)
+            default_start_time = default_start_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+            start_time = demisto.args().get('start_time', default_start_time)
             limit = demisto.args().get('limit', 10)
             search_generic_command(client, query, start_time, limit)
+        elif demisto.command() == "fetch-incidents":
+            fetch_incidents(client)
 
     except ValueError as v_err:
         return_error(str(v_err))
@@ -1558,7 +1612,7 @@ def main():
         """ Caused mostly when URL is altered."""
         return_error(f'Failed to execute {demisto.command()} command. Error: {str(c)}')
     except Exception as e:
-        return_error(f'Failed to execute {demisto.command()} command. Error: {str(e)}')
+        return_error(f'Failed to execute {demisto.command()} command. Error: {str(e)} Params: ')
 
 
 if __name__ in ['__main__', 'builtin', 'builtins']:
