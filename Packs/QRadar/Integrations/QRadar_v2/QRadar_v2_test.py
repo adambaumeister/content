@@ -22,7 +22,9 @@ from QRadar_v2 import (
     try_create_search_with_retry,
     try_poll_offense_events_with_retry,
     enrich_offense_result,
-    get_asset_ips_and_enrich_offense_addresses
+    try_poll_saved_search_events_with_retry,
+    get_asset_ips_and_enrich_offense_addresses,
+    poll_saved_search
 )
 
 with open("TestData/commands_outputs.json", "r") as f:
@@ -76,6 +78,38 @@ def test_commands(command, command_func, args, mocker):
     res = command_func(client, **args)
     assert COMMAND_OUTPUTS[command] == res.get("EntryContext")
 
+
+def test_poll_saved_search(mocker):
+    """
+    """
+    client = QRadarClient("", {}, {"identifier": "*", "password": "*"})
+    saved_search_id = "10"
+
+    mocker.patch.object(QRadar_v2, "is_reset_triggered", return_value=False)
+    # Return the executing status first time, then the completed search the second time
+    mocker.patch.object(client, "saved_search", side_effect=[RAW_RESPONSES["qradar-searches"]])
+    mocker.patch.object(client, "get_search", return_value=RAW_RESPONSES["qradar-get-search"])
+    mocker.patch.object(client, "get_search_results", return_value=RAW_RESPONSES["qradar-get-search-results"])
+    mocker.patch.object(demisto, "debug")
+
+    actual = poll_saved_search(client, saved_search_id)
+    assert len(actual) == 1
+
+def test_try_poll_saved_search(mocker):
+    """
+    """
+    client = QRadarClient("", {}, {"identifier": "*", "password": "*"})
+    query_status = "EXECUTE"
+    search_id = "1"
+    max_retries = 0
+
+    mocker.patch.object(QRadar_v2, "is_reset_triggered", return_value=False)
+    mocker.patch.object(client, "get_search", return_value=RAW_RESPONSES["qradar-get-search"])
+    mocker.patch.object(client, "get_search_results", return_value=RAW_RESPONSES["qradar-get-search-results"])
+    mocker.patch.object(demisto, "debug")
+
+    actual = try_poll_saved_search_events_with_retry(client, query_status, search_id, max_retries)
+    assert len(actual) == 1
 
 def test_fetch_incidents_long_running_no_events(mocker):
     """

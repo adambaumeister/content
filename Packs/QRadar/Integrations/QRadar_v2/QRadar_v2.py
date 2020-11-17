@@ -309,6 +309,13 @@ class QRadarClient:
         url = f"{self._server}/api/ariel/searches"
         return self.send_request("POST", url, self._auth_headers, params=args)
 
+    def saved_search(self, saved_search_id):
+        """
+        Runs a saved search
+        """
+        url = f"{self._server}/api/ariel/searches?saved_search_id={saved_search_id}"
+        return self.send_request("POST", url, self._auth_headers)
+
     def get_search(self, search_id):
         """
         Returns a search object (doesn't contain result)
@@ -803,6 +810,60 @@ def perform_offense_events_enrichment(
         return offense
 
 
+def try_poll_saved_search_events_with_retry(
+    client, search_id, query_status, max_retries=None
+):
+    """
+    Polls search until the search is done (completed/canceled/error), and then returns the search result
+    will retry up to max_retries consecutive failures
+    """
+    if not max_retries:
+        max_retries = EVENTS_FAILURE_LIMIT
+    failures = 0
+    start_time = time.time()
+    while not (query_status in TERMINATING_SEARCH_STATUSES or failures >= max_retries):
+        try:
+            if is_reset_triggered(client.lock):
+                return []
+
+            raw_search = client.get_search(search_id)
+            query_status = raw_search.get("status")
+
+            # failures are relevant only when consecutive
+            failures = 0
+
+            if query_status in TERMINATING_SEARCH_STATUSES:
+
+                raw_search_results = client.get_search_results(search_id)
+                print_debug_msg(
+                    f"Events fetched for search {search_id}.", client.lock
+                )
+                events = raw_search_results.get("events", [])
+                for event in events:
+                    try:
+                        for time_field in EVENT_TIME_FIELDS:
+                            if time_field in event:
+                                event[time_field] = epoch_to_iso(event[time_field])
+                    except TypeError:
+                        continue
+                return events
+            else:
+                # prepare next run
+                elapsed = time.time() - start_time
+                if elapsed >= FETCH_SLEEP:  # print status debug every fetch sleep (or after)
+                    print_debug_msg(
+                        f"Still fetching events, search_id: {search_id}.",
+                        client.lock,
+                    )
+                    start_time = time.time()
+                time.sleep(EVENTS_INTERVAL_SECS)
+        except Exception as e:
+            print_debug_msg(f"Error while fetching events, search_id: {search_id}. "
+                            f"Error details: {str(e)}")
+            failures += 1
+    return []
+
+
 def try_poll_offense_events_with_retry(
     client, offense_id, query_status, search_id, max_retries=None
 ):
@@ -1115,6 +1176,25 @@ def get_offenses_command(
         "QRadar.Offense(val.ID === obj.ID)",
     )
 
+def poll_saved_search(client, saved_search_id):
+    r = client.saved_search(saved_search_id)
+    search_id = r.get("search_id")
+    query_status = r.get("status")
+    events = try_poll_saved_search_events_with_retry(client, search_id, query_status)
+    return events
+
+def saved_search_command(
+    client: QRadarClient
+):
+    saved_search_id = demisto.args().get("saved_search_id")
+    events = poll_saved_search(client, saved_search_id)
+    return_results(
+        CommandResults(
+            outputs=events,
+            readable_output=tableToMarkdown("Saved Search Result", events),
+            outputs_prefix="Qradar.SavedSearch"
+        )
+    )
 
 def enrich_offense_result(
     client: QRadarClient, response, ip_enrich=False, asset_enrich=False
@@ -2274,6 +2354,7 @@ def main():
             "qradar-update-offense": update_offense_command,
             "qradar-searches": search_command,
             "qradar-get-search": get_search_command,
+            "qradar-saved-search": saved_search_command,
             "qradar-get-search-results": get_search_results_command,
             "qradar-get-assets": get_assets_command,
             "qradar-get-asset-by-id": get_asset_by_id_command,
