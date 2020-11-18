@@ -775,6 +775,10 @@ script:
     description: Runs the given query against the entire Flashpoint event database
     execution: false
     name: flashpoint-search-all
+    outputs:
+    - contextPath: FlashPoint.GenericSearch.fpid
+      description: Flashpoint event ID
+      type: Unknown
   dockerimage: demisto/python3:3.8.2.6981
   feed: false
   isfetch: true

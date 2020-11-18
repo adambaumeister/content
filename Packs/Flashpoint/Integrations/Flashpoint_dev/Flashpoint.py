@@ -1431,7 +1431,8 @@ def search_generic(client, query, start_date, limit=10):
     Query the Flashpoint database for all events matching the given query
     """
     limit = int(limit)
-    suffix = f'/all/search?query={query}+last_observed_at.date-time:' \
+    start_date = int(start_date)
+    suffix = f'/all/search?query={query}+header_.indexed_at:' \
              f'[{start_date} TO *]&limit={limit}'
     resp = client.http_request("GET", url_suffix=suffix)
     result = resp.get('hits').get('hits', [])
@@ -1464,12 +1465,15 @@ def fetch_incidents(client):
     last_run = demisto.getLastRun()
     if not last_run:
         start_date = datetime.now() - timedelta(days=1)
-        start_date = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+        start_date = start_date.timestamp()
+        #start_date = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
     else:
         last_fetch = last_run.get('last_fetch')
         time = datetime.fromisoformat(str(last_fetch))
-        start_date = time.strftime("%Y-%m-%dT%H:%M:%SZ")
+        start_date = time.timestamp()
+        #start_date = time.strftime("%Y-%m-%dT%H:%M:%SZ")
 
+    demisto.info(f"Running Flashpoint Fetch Incidents, start date: {start_date}")
     # Grab the integration params
     query = demisto.params().get("query", "+basetypes:(credential-sighting)")
     limit = demisto.params().get("limit", "10")

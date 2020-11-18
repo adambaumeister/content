@@ -51,6 +51,9 @@ class MyTestCase(unittest.TestCase):
 
     @patch("Flashpoint.Client.http_request")
     def test_search_generic(self, mocker):
+        """
+        Test the generic flashpoint search
+        """
         from Flashpoint import search_generic
 
         with open("./TestData/events_search_breach.json", encoding='utf-8') as f:
