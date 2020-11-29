@@ -39,11 +39,91 @@
           "extraction_record_id": "extractionrecordid",
           "fpid": "credfpid",
           "header_": {
-            "indexed_at": 1605321452
+              "indexed_at": 1605321452
           },
           "is_fresh": true,
           "last_observed_at": {
             "date-time": "2020-11-13T20:59:49Z",
+            "timestamp": 1605301189
+          },
+          "password": "fake",
+          "password_complexity": {
+            "has_lowercase": true,
+            "has_number": true,
+            "has_symbol": false,
+            "has_uppercase": false,
+            "length": 40,
+            "probable_hash_algorithms": [
+              "SHA-1",
+              "Double SHA-1",
+              "RIPEMD-160",
+              "Haval-160",
+              "Tiger-160",
+              "HAS-160",
+              "LinkedIn",
+              "Skein-256(160)",
+              "Skein-512(160)",
+              "MangosWeb Enhanced CMS",
+              "sha1(sha1(sha1($pass)))",
+              "sha1(md5($pass))",
+              "sha1($pass.$salt)",
+              "sha1($salt.$pass)",
+              "sha1(unicode($pass).$salt)",
+              "sha1($salt.unicode($pass))",
+              "HMAC-SHA1 (key = $pass)",
+              "HMAC-SHA1 (key = $salt)",
+              "sha1($salt.$pass.$salt)",
+              "Cisco Type 7",
+              "BigCrypt"
+            ]
+          },
+          "times_seen": 1
+        },
+        "_type": "_doc"
+      },
+      {
+        "_id": "notrealid2",
+        "_source": {
+          "affected_domain": "fakewebsite2.sg",
+          "basetypes": [
+            "credential-sighting"
+          ],
+          "body": {
+            "raw": "fake2@fakecustomerdomain.com:ae123456712345671234"
+          },
+          "breach": {
+            "_header": {},
+            "basetypes": [
+              "breach"
+            ],
+            "breach_type": "credential",
+            "created_at": {
+              "date-time": "2020-11-11T12:30:00Z",
+              "timestamp": 1605096000
+            },
+            "first_observed_at": {
+              "date-time": "2020-11-13T21:59:49Z",
+              "timestamp": 1605301189
+            },
+            "fpid": "notrealide",
+            "source": "Analyst Research",
+            "source_type": "Analyst Research",
+            "title": "Compromised Users from test.com Nov112020",
+            "victim": "test.com"
+          },
+          "credential_record_fpid": "credfpid",
+          "customer_id": "customerid",
+          "domain": "fakecustomerdomain.com",
+          "email": "fake2@fakecustomerdomain.com",
+          "extraction_id": "extractionid",
+          "extraction_record_id": "extractionrecordid",
+          "fpid": "credfpid",
+          "header_": {
+            "indexed_at": 1605321460
+          },
+          "is_fresh": true,
+          "last_observed_at": {
+            "date-time": "2020-11-13T21:59:49Z",
             "timestamp": 1605301189
           },
           "password": "fake",

@@ -1462,24 +1462,25 @@ def search_generic_command(client, query, start_date, limit=10):
 
 
 def fetch_incidents(client):
+    """
+    Create incidents based on Flashpoint Events
+    """
     last_run = demisto.getLastRun()
     if not last_run:
         start_date = datetime.now() - timedelta(days=1)
         start_date = start_date.timestamp()
-        #start_date = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
     else:
         last_fetch = last_run.get('last_fetch')
         time = datetime.fromisoformat(str(last_fetch))
         start_date = time.timestamp()
-        #start_date = time.strftime("%Y-%m-%dT%H:%M:%SZ")
-
-    demisto.info(f"Running Flashpoint Fetch Incidents, start date: {start_date}")
+    demisto.info(f"Running Flashpoint Fetch Incidents, start date: {start_date} : {datetime.fromtimestamp(start_date)}")
     # Grab the integration params
     query = demisto.params().get("query", "+basetypes:(credential-sighting)")
     limit = demisto.params().get("limit", "10")
 
     results = search_generic(client, query, start_date, limit)
     incidents = []
+    indexed_at_times = []
     for hit in results:
         # Compute the incident name..
         # Credential-sighting
@@ -1490,7 +1491,14 @@ def fetch_incidents(client):
             fpid = hit.get("_source").get("fpid")
             name = f"Flashpoint Event {fpid}"
 
+        # Occured is the time attached to the actual event (aka when the password was breached, for example
+        # We use this to set the incident occured time.
         occured = hit.get("_source").get("last_observed_at").get("date-time")
+
+        # Indexed_at is the timestamp of when the event was populated into the Flashpoint API.
+        indexed_at = hit.get("_source").get("header_").get("indexed_at")
+        if indexed_at:
+            indexed_at_times.append(indexed_at)
         incident = {
             'name': name,
             'occured': occured,
@@ -1498,10 +1506,17 @@ def fetch_incidents(client):
         }
 
         incidents.append(incident)
-    endTime = datetime.now()
 
-    lastRun = {'last_fetch': endTime.isoformat()}
-    demisto.setLastRun(lastRun)
+    # Here we set the fetch time.
+    # If we got an event from flashpoint, that event becomes the last fetch interval until the next event
+    # If we've never gotten an event, start_date will always be now() - 1 day
+    if indexed_at_times:
+        indexed_at_times.sort(reverse=True)
+        # We add one second to avoid returning the same index across multiple runs
+        endTime = datetime.fromtimestamp(indexed_at_times[0] + 1)
+        lastRun = {'last_fetch': endTime.isoformat()}
+        demisto.setLastRun(lastRun)
+
     demisto.incidents(incidents)
 
     return incidents
