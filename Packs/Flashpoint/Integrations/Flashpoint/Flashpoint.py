@@ -1425,6 +1425,101 @@ def get_forum_posts_command(client, post_search):
     return hr, ec, resp
 
 
+def search_generic(client, query, start_date, limit=10):
+    """
+    Query the Flashpoint database for all events matching the given query
+    """
+    limit = int(limit)
+    start_date = int(start_date)
+    suffix = f'/all/search?query={query}+header_.indexed_at:' \
+             f'[{start_date} TO *]&limit={limit}'
+    resp = client.http_request("GET", url_suffix=suffix)
+    result = resp.get('hits').get('hits', [])
+    return result
+
+
+def search_generic_command(client, query, start_date, limit=10):
+    """
+    Query the Flashpoint database for all events matching the given query
+    """
+    result = search_generic(client, query, start_date, limit)
+    t = []
+    for hit in result:
+        r = {
+            "fpid": hit.get("_source").get("fpid"),
+            "basetypes": hit.get("_source").get("basetypes")
+        }
+        t.append(r)
+
+    md_table = tableToMarkdown("Search Results", t)
+
+    return_results(CommandResults(
+        outputs_prefix="FlashPoint.GenericSearch",
+        outputs=result,
+        readable_output=md_table
+    ))
+
+
+def fetch_incidents(client):
+    """
+    Create incidents based on Flashpoint Events
+    """
+    last_run = demisto.getLastRun()
+    if not last_run:
+        start_date = datetime.now() - timedelta(days=1)
+        start_date = start_date.timestamp()
+    else:
+        last_fetch = last_run.get('last_fetch')
+        time = datetime.fromisoformat(str(last_fetch))
+        start_date = time.timestamp()
+    demisto.info(f"Running Flashpoint Fetch Incidents, start date: {start_date} : {datetime.fromtimestamp(start_date)}")
+    # Grab the integration params
+    query = demisto.params().get("query", "+basetypes:(credential-sighting)")
+    limit = demisto.params().get("limit", "10")
+
+    results = search_generic(client, query, start_date, limit)
+    incidents = []
+    indexed_at_times = []
+    for hit in results:
+        # Compute the incident name..
+        # Credential-sighting
+        if hit.get("_source").get("email"):
+            email = hit.get("_source").get("email")
+            name = f"Flashpoint Credential Breach - {email}"
+        else:
+            fpid = hit.get("_source").get("fpid")
+            name = f"Flashpoint Event {fpid}"
+
+        # Occured is the time attached to the actual event (aka when the password was breached, for example
+        # We use this to set the incident occured time.
+        occured = hit.get("_source").get("last_observed_at").get("date-time")
+
+        # Indexed_at is the timestamp of when the event was populated into the Flashpoint API.
+        indexed_at = hit.get("_source").get("header_").get("indexed_at")
+        if indexed_at:
+            indexed_at_times.append(indexed_at)
+        incident = {
+            'name': name,
+            'occured': occured,
+            'rawJSON': json.dumps(hit)
+        }
+
+        incidents.append(incident)
+
+    # Here we set the fetch time.
+    # If we got an event from flashpoint, that event becomes the last fetch interval until the next event
+    # If we've never gotten an event, start_date will always be now() - 1 day
+    if indexed_at_times:
+        indexed_at_times.sort(reverse=True)
+        # We add one second to avoid returning the same index across multiple runs
+        endTime = datetime.fromtimestamp(indexed_at_times[0] + 1)
+        lastRun = {'last_fetch': endTime.isoformat()}
+        demisto.setLastRun(lastRun)
+
+    demisto.incidents(incidents)
+
+    return incidents
+
 def main():
     """
     PARSE AND VALIDATE INTEGRATION PARAMS
@@ -1517,6 +1612,17 @@ def main():
         elif demisto.command() == 'flashpoint-search-forum-posts':
             post_search = demisto.args()['post_search']
             return_outputs(*get_forum_posts_command(client, post_search))
+
+        elif demisto.command() == 'flashpoint-search-all':
+            query = demisto.args().get('query')
+            default_start_time = datetime.now() - timedelta(days=1)
+            default_start_time = default_start_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+            start_time = demisto.args().get('start_time', default_start_time)
+            limit = demisto.args().get('limit', 10)
+            search_generic_command(client, query, start_time, limit)
+        elif demisto.command() == "fetch-incidents":
+            fetch_incidents(client)
 
     except ValueError as v_err:
         return_error(str(v_err))

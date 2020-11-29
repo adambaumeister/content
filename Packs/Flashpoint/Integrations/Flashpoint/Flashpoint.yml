@@ -580,8 +580,39 @@ script:
     outputs:
     - contextPath: Flashpoint.Forum.Post
       description: A list of forum posts based on the search keyword.
-    description: Search forum posts using a keyword
+      type: Unknown
+  - arguments:
+    - default: false
+      description: Query to run
+      isArray: false
+      name: query
+      required: true
+      secret: false
+    - default: false
+      description: First event time to search for - defaults to 24 hours ago
+      isArray: false
+      name: start_time
+      required: false
+      secret: false
+    - default: false
+      description: Total number of records to query - defaults to 10
+      isArray: false
+      name: limit
+      required: false
+      secret: false
+    deprecated: false
+    description: Runs the given query against the entire Flashpoint event database
+    execution: false
+    name: flashpoint-search-all
+    outputs:
+    - contextPath: FlashPoint.GenericSearch.fpid
+      description: Flashpoint event ID
+      type: Unknown
   dockerimage: demisto/python3:3.8.2.6981
+  feed: false
+  isfetch: true
+  longRunning: false
+  longRunningPort: false
   runonce: false
   subtype: python3
 tests:
